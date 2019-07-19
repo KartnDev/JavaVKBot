@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
+import java.util.Random;
 
 public class VKMethods {
     private static final String URLAPI = "https://api.vk.com/method/";
@@ -47,6 +48,9 @@ public class VKMethods {
         return 0;
     }
 
-
+    public int sendMessage(String pushType, String id, String message){
+        String argsLine = pushType+"=" + id + "&random_id="+(new Random()).nextInt() + "&message="+ message;
+       return vkMethod("messages.send", argsLine);
+    }
 
 }

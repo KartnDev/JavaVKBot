@@ -14,7 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		VKMethods bot = new VKMethods("");
-		bot.vkMethod("messages.send", "user_id=376359640&random_id=11022320&message=123");
+		bot.sendMessage("user_id", "376359640", "ролл");
 
 	}
 
