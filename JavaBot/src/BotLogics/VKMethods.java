@@ -1,5 +1,7 @@
 package BotLogics;
 import Base.Algorithms;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,31 +17,34 @@ public class VKMethods {
     private static final String ENDNAME = "?";
     private String accessToken;
     private URL api;
-    public VKMethods(String apitoken){
-        this.accessToken = "&access_token="+apitoken;
+    public VKMethods(String apiToken){
+        this.accessToken = "&access_token="+apiToken;
     }
 
 
-    public int vkMethod(String methodname, String argsline){
+    public int vkMethod(String methodName, String argsline){
         try{
-            api = new URL(URLAPI + methodname + ENDNAME + argsline  +accessToken + VERSION);
-            System.out.println(URLAPI + methodname + ENDNAME + argsline  +accessToken + VERSION);
+            api = new URL(URLAPI + methodName + ENDNAME + argsline  +accessToken + VERSION);
+            System.out.println(URLAPI + methodName + ENDNAME + argsline  +accessToken + VERSION);
             URLConnection apiRequest = api.openConnection();
             BufferedReader content = new BufferedReader(new InputStreamReader(apiRequest.getInputStream()));
-            Algorithms algs = new Algorithms();
-            System.out.println(algs.toDict(content.readLine()).get("response"));
-
-
-
+            Algorithms algorithms = new Algorithms();
 
         }catch (MalformedURLException e){
             //  handling the exception
             //  watch inet connection
             //  retry to POST the api request
+            System.out.println("Malformed URL exception");
             e.printStackTrace();
             return -1;
-        } catch (ParseException e) {
-
+        } catch (JsonSyntaxException e) {
+            System.out.println("JSON syntax exception");
+            e.printStackTrace();
+            return -1;
+        } catch (JsonParseException e) {
+            System.out.println("JSON parse exception");
+            e.printStackTrace();
+            return -1;
         } catch (Exception e){
             System.out.println("Unhandled exception");
             e.printStackTrace();
@@ -50,7 +55,21 @@ public class VKMethods {
 
     public int sendMessage(String pushType, String id, String message){
         String argsLine = pushType+"=" + id + "&random_id="+(new Random()).nextInt() + "&message="+ message;
-       return vkMethod("messages.send", argsLine);
+        return vkMethod("messages.send", argsLine);
+    }
+
+    public int sendMessage(String pushType, String id, String message, String attachment){
+        String argsLine = pushType+"=" + id + "&random_id="+(new Random()).nextInt() + "&message="+ message +
+                "&attachment=" + attachment;
+        return vkMethod("messages.send", argsLine);
+    }
+
+    public  int removeFromChat(String userId, String chatId){
+           return vkMethod("messages.removeChatUser", "chat_id="+ chatId + "&user_id="+userId);
+    }
+
+    public int addToChat(String userId, String chatId){
+        return vkMethod("messages.addChatUser", "chat_id="+ chatId + "&user_id="+userId);
     }
 
 }

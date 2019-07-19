@@ -13,8 +13,10 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		VKMethods bot = new VKMethods("");
+		VKMethods bot = new VKMethods("e3c30bf8a99dd17da33d10b5087627fd5b23ce60cb6e894d4598d8265b4ea7310b85ed6fabb5da3019b37");
 		bot.sendMessage("user_id", "376359640", "ролл");
+		bot.removeFromChat("376359640", "3");
+		bot.addToChat("376359640", "3");
 
 	}
 
