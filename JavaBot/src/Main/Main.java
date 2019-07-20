@@ -13,7 +13,7 @@ public class Main {
     //TODO rewrite BotBan
     public static void main(String[] args) throws Exception{
 
-        Bot bot = new Bot("e3c30bf8a99dd17da33d10b5087627fd5b23ce60cb6e894d4598d8265b4ea7310b85ed6fabb5da3019b37");
+        Bot bot = new Bot("");
         bot.banInChat("376359640", "3", "10");
 
     }
