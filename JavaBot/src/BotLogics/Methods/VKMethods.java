@@ -1,10 +1,13 @@
 package BotLogics.Methods;
 import Base.Algorithms;
+import BotLogics.net.NetworkMethods;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,10 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class VKMethods{
-    private static final String URLAPI = "https://api.vk.com/method/";
+public class VKMethods  extends NetworkMethods{
+    private static final String URL_API = "https://api.vk.com/method/";
     private static final String VERSION = "&v=5.101";
-    private static final String ENDNAME = "?";
+    private static final String END_NAME = "?";
     private String accessToken;
     private URL api;
     public VKMethods(String apiToken){
@@ -25,17 +28,33 @@ public class VKMethods{
     }
 
 
+
+
+
+    @Override
+    public String parseURL(String url) {
+        try {
+            return (new BufferedReader(new InputStreamReader((new URL(url)).openConnection().getInputStream()))).readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "exceptedString";
+    }
+
+
+
+
     protected int vkMethod(String methodName, String argsLine){
         try{
-            api = new URL(URLAPI + methodName + ENDNAME + argsLine  +accessToken + VERSION);
-            System.out.println(URLAPI + methodName + ENDNAME + argsLine  +accessToken + VERSION);
+            api = new URL(URL_API + methodName + END_NAME + argsLine  +accessToken + VERSION);
+            System.out.println(URL_API + methodName + END_NAME + argsLine  +accessToken + VERSION);
             URLConnection apiRequest = api.openConnection();
             BufferedReader content = new BufferedReader(new InputStreamReader(apiRequest.getInputStream()));
             Algorithms algorithms = new Algorithms();
 
         }catch (MalformedURLException e){
             //  handling the exception
-            //  watch inet connection
+            //  watch net connection
             //  retry to POST the api request
             System.out.println("Malformed URL exception");
             e.printStackTrace();
@@ -55,33 +74,32 @@ public class VKMethods{
         }
         return 0;
     }
-    protected String vkMethod(String methodName, String argsLine, String needJSON){
-        try{
-            api = new URL(URLAPI + methodName + ENDNAME + argsLine  +accessToken + VERSION);
-            System.out.println(URLAPI + methodName + ENDNAME + argsLine  +accessToken + VERSION);
-            URLConnection apiRequest = api.openConnection();
-            BufferedReader content = new BufferedReader(new InputStreamReader(apiRequest.getInputStream()));
-            return content.readLine();
-        }catch (MalformedURLException e){
-            //  handling the exception
-            //  watch inet connection
-            //  retry to POST the api request
-            System.out.println("Malformed URL exception");
-            e.printStackTrace();
 
-        } catch (Exception e){
-            System.out.println("Unhandled exception");
-            e.printStackTrace();
+    protected String vkMethod(String methodName, String argsLine, boolean needJSON){
+        if(needJSON) {
+            try {
+                api = new URL(URL_API + methodName + END_NAME + argsLine + accessToken + VERSION);
+                System.out.println(URL_API + methodName + END_NAME + argsLine + accessToken + VERSION);
+                URLConnection apiRequest = api.openConnection();
+                BufferedReader content = new BufferedReader(new InputStreamReader(apiRequest.getInputStream()));
+                return content.readLine();
+            } catch (MalformedURLException e) {
+                //  handling the exception
+                //  watch inet connection
+                //  retry to POST the api request
+                System.out.println("Malformed URL exception");
+                e.printStackTrace();
 
+            } catch (Exception e) {
+                System.out.println("Unhandled exception");
+                e.printStackTrace();
+
+            }
+            return "null";
+        } else {
+            return ("" + vkMethod(methodName, argsLine));
         }
-        return "null";
     }
-
-
-
-
-
-
 
     protected int sendMessage(String pushType, String id, String message){
         String argsLine = pushType+"=" + id + "&random_id="+(new Random()).nextInt() + "&message="+ message;
@@ -103,9 +121,26 @@ public class VKMethods{
     }
 
 
-    protected HashMap<String, String> getLongPollServer(String version, String needPts){
-        Map map = (new Gson()).fromJson(jsonString, Map.class);
-        return  vkMethod("messages.getLongPollServer", "lp_version="  + version + "&need_pts=" + needPts);
+    protected Map<String, String> getLongPollServer(String version, int needPts){
+        /* version is a value from 1 to 3
+        * correct version is 3
+        * need pts is a boolean (1 or 0)
+        * to get pts key
+        * returns pts for vk method 'messages.getLongPollHistory'
+        * */
+        String request = vkMethod("messages.getLongPollServer", "lp_version="  + version +
+                "&need_pts=" + needPts, true);
+        Map map = (new Gson()).fromJson(request, Map.class);
+        return  map;
     }
+
+
+    protected Map<String, String> requestLongPoolServer(String serverName, String act, String longPoolKey,
+                                                        String ts, String wait, String mode, String version) {
+        String url = NetworkMethods.httpUrl + serverName + "?" + "act="+ act + "&key=" + longPoolKey + "&ts=" + ts + "&wait="
+                + wait + "&mode=" + mode + "&version=" + version;
+        return Algorithms.toDict(parseURL(url));
+    }
+
 
 }
