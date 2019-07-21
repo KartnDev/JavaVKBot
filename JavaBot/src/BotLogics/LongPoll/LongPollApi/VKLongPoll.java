@@ -7,6 +7,9 @@ import java.util.HashMap;
 
 public class VKLongPoll {
     private static final int CHAT_START_ID = 2000000000;
+    private static final String longPollURL = "https://{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=2&version=2";
+
+
     private VKEvents DEFAULT_EVENT_CLASS = new VKEvents();
     enum PRELOAD_MESSAGE_EVENT { MESSAGE_NEW, MESSAGE_EDIT }
 

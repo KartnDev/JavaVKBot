@@ -5,15 +5,14 @@ import BotLogics.Methods.VKMethods;
 
 import static java.lang.Integer.parseInt;
 
-public class Bot{
+public class Bot extends VKMethods{
     private String accessToken;
-    private VKMethods vkMethods;
     public Bot(String accessToken){
-        vkMethods = new VKMethods(accessToken);
+        super(accessToken);
         this.accessToken = accessToken;
     }
     public void sendMessageChat(String chatId, String message){
-        if(vkMethods.sendMessage("chat_id", chatId, message) != 0){
+        if(sendMessage("chat_id", chatId, message) != 0){
             System.out.println("Something went wrong while sending message\n Probably.. IO or Net exception");
         }
     }
@@ -21,28 +20,28 @@ public class Bot{
 
     public void sendMessageChat(String chatId, String message, String attachment){
 
-        if(vkMethods.sendMessage("chat_id", chatId, message, attachment) != 0){
+        if(sendMessage("chat_id", chatId, message, attachment) != 0){
             System.out.println("Something went wrong while sending message\n Probably.. IO or Net exception");
         }
     }
 
 
     public void sendMessageUser(String userId, String message){
-        if(vkMethods.sendMessage("user_id", userId, message) != 0){
+        if(sendMessage("user_id", userId, message) != 0){
             System.out.println("Something went wrong while sending message\n Probably.. IO or Net exception");
         }
     }
 
 
     public void sendMessageUser(String userId, String message, String attachment){
-        if(vkMethods.sendMessage("user_id", userId, message) != 0){
+        if(sendMessage("user_id", userId, message) != 0){
             System.out.println("Something went wrong while sending message\n Probably.. IO or Net exception");
         }
     }
 
 
     public  void inviteToChat(String userId, String chatId){
-        int funcValidation = vkMethods.addToChat(userId, chatId);
+        int funcValidation =addToChat(userId, chatId);
         if(funcValidation == 0){
         }else if(funcValidation == 1){
             sendMessageChat(chatId, "Невозможно добавить пользователя...");
@@ -53,7 +52,7 @@ public class Bot{
 
 
     public void banInChat(String userId, String chatId){
-        int funcValidation = vkMethods.removeFromChat(userId, chatId);
+        int funcValidation = removeFromChat(userId, chatId);
 
         if(funcValidation == 0){
             sendMessageChat(chatId, "Забанен на всегда! (без причины)");
@@ -70,7 +69,7 @@ public class Bot{
             public void run() {
                 try {
                     int offset = parseInt(time);
-                    int funcValidation = vkMethods.removeFromChat(userId, chatId);
+                    int funcValidation = removeFromChat(userId, chatId);
                     if(funcValidation == 0){
                         sendMessageChat(chatId, Algorithms.stringToUnicode("Забанен на "));
                     }else if(funcValidation == 1){
@@ -87,6 +86,6 @@ public class Bot{
         }).start();
     }
     public void banInChat(String userId, String chatId, String time, String reason){
-        int funcValidation = vkMethods.removeFromChat(userId, chatId);
+        int funcValidation = removeFromChat(userId, chatId);
     }
 }
