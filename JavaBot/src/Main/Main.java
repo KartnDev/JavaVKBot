@@ -1,6 +1,7 @@
 package Main;
 import BotLogics.Bot;
-
+import BotLogics.LongPoll.LongPollApi.VKLongPoll;
+import BotLogics.net.NetworkMethods;
 import java.net.URL;
 public class Main {
 
@@ -14,8 +15,9 @@ public class Main {
     public static void main(String[] args) throws Exception{
 
         Bot bot = new Bot("");
-        bot.banInChat("376359640", "3", "10");
-
+        VKLongPoll longPoll = new VKLongPoll("");
+        longPoll.startPool();
+        longPoll.run();
     }
 
 }

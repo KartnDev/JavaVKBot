@@ -136,9 +136,9 @@ public class VKMethods  extends NetworkMethods{
         return  map;
     }
 
-
+    //TODO проблема: ключ ts перееводится в дабл и подается нее правильно как токен
     protected LinkedTreeMap<String, Object> requestLongPoolServer(String serverName, String serverIm, String act, String longPoolKey,
-                                                        Double ts, String wait, String mode, String version) {
+                                                        String ts, String wait, String mode, String version) {
         String url = NetworkMethods.httpUrl + serverName +"/" +serverIm  + "?" + "act="+ act + "&key=" + longPoolKey + "&ts=" + ts + "&wait="
                 + wait + "&mode=" + mode + "&version=" + version;
         return Algorithms.toDict(parseURL(url));

@@ -51,13 +51,12 @@ public class VKLongPoll extends VKMethods {
         act = "a_check";
     }
 
-    public LinkedTreeMap<String, Object> getVkLongPool(Double ts){
+    public LinkedTreeMap<String, Object> getVkLongPool(String ts){
         return  requestLongPoolServer(serverName, serverIm, act, serverKey, ts, "25" ,"2", "3");
     }
     public void run(){
-        LinkedTreeMap<String, Object> request = getVkLongPool(Double.valueOf(ts));
-        ts = request.get("ts").toString();
-        System.out.println(getVkLongPool(Double.valueOf(ts)));
+        LinkedTreeMap<String, Object> request = getVkLongPool(String.valueOf(Double.valueOf(ts).intValue()));
+        System.out.println(getVkLongPool(String.valueOf(Double.valueOf(ts).intValue())));
     }
 
 }
