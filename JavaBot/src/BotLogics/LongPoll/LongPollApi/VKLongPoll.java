@@ -3,6 +3,7 @@ package BotLogics.LongPoll.LongPollApi;
 import Base.Algorithms;
 import BotLogics.LongPoll.Events.VKEvents;
 import BotLogics.Methods.VKMethods;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -28,7 +29,9 @@ public class VKLongPoll extends VKMethods {
 
     private static final int CHAT_START_ID = 2000000000;
     private static final String longPollURL = "https://{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=2&version=2";
-    private String serverName = "";
+    private String serverNameSpace[] = null;
+    private String serverName;
+    private String serverIm;
     private String act = "";
     private String serverKey = "";
     private String pts = "";
@@ -38,17 +41,23 @@ public class VKLongPoll extends VKMethods {
 
 
     public void startPool(){
-        Map<String, String> request = Algorithms.toDict(getLongPollServer("3", 1).get("response"));
-        serverName = request.get("server");
-        pts = request.get("pts");
-        serverKey = request.get("key");
-        ts = request.get("ts");
+        LinkedTreeMap<String, Object> request = getLongPollServer("3", 1).get("response");
+        serverKey = (String)request.get("key");
+        serverNameSpace = request.get("server").toString().split("/");
+        serverName = serverNameSpace[0];
+        serverIm = serverNameSpace[1];
+        ts = request.get("ts").toString();
+        pts = request.get("pts").toString();
         act = "a_check";
     }
 
-    public void listenVkLongPool(){
-        System.out.println(requestLongPoolServer(serverName, act, serverKey, ts, "25" ,"2", "3"));
+    public LinkedTreeMap<String, Object> getVkLongPool(Double ts){
+        return  requestLongPoolServer(serverName, serverIm, act, serverKey, ts, "25" ,"2", "3");
     }
-
+    public void run(){
+        LinkedTreeMap<String, Object> request = getVkLongPool(Double.valueOf(ts));
+        ts = request.get("ts").toString();
+        System.out.println(getVkLongPool(Double.valueOf(ts)));
+    }
 
 }

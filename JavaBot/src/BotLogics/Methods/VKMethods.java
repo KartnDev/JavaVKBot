@@ -4,6 +4,7 @@ import BotLogics.net.NetworkMethods;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.internal.LinkedTreeMap;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.BufferedReader;
@@ -34,6 +35,7 @@ public class VKMethods  extends NetworkMethods{
     @Override
     public String parseURL(String url) {
         try {
+            System.out.println(url);
             return (new BufferedReader(new InputStreamReader((new URL(url)).openConnection().getInputStream()))).readLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +123,7 @@ public class VKMethods  extends NetworkMethods{
     }
 
 
-    protected Map<String, String> getLongPollServer(String version, int needPts){
+    protected Map<String, LinkedTreeMap<String, Object>> getLongPollServer(String version, int needPts){
         /* version is a value from 1 to 3
         * correct version is 3
         * need pts is a boolean (1 or 0)
@@ -135,9 +137,9 @@ public class VKMethods  extends NetworkMethods{
     }
 
 
-    protected Map<String, String> requestLongPoolServer(String serverName, String act, String longPoolKey,
-                                                        String ts, String wait, String mode, String version) {
-        String url = NetworkMethods.httpUrl + serverName + "?" + "act="+ act + "&key=" + longPoolKey + "&ts=" + ts + "&wait="
+    protected LinkedTreeMap<String, Object> requestLongPoolServer(String serverName, String serverIm, String act, String longPoolKey,
+                                                        Double ts, String wait, String mode, String version) {
+        String url = NetworkMethods.httpUrl + serverName +"/" +serverIm  + "?" + "act="+ act + "&key=" + longPoolKey + "&ts=" + ts + "&wait="
                 + wait + "&mode=" + mode + "&version=" + version;
         return Algorithms.toDict(parseURL(url));
     }
